@@ -1,7 +1,14 @@
 ---
-title: "Basketball Games Analysis"
-format: html
+title: "Basketball Score Heatmap"
+format:
+  html:
+    theme: journal
+    css: styles.css
+    toc: false
 ---
+
+
+Explore the distribution of home and away score combinations across the season. White tiles indicate score pairs that never occurred, while the colored heatmap highlights the most common game results.
 
 ```{r}
 #| message: false
@@ -10,38 +17,59 @@ format: html
 
 library(tidyverse)
 
-# Read the Games.csv file
 games <- read_csv("Games.csv")
 
-# Display the first few rows
-head(games)
-```
+all_scores <- expand_grid(
+  homeScore = seq(min(games$homeScore), max(games$homeScore), by = 1),
+  awayScore = seq(min(games$awayScore), max(games$awayScore), by = 1)
+)
 
-```{r}
-#| echo: false
+density_data <- all_scores %>%
+  left_join(
+    games %>%
+      group_by(homeScore, awayScore) %>%
+      summarise(count = n(), .groups = "drop"),
+    by = c("homeScore", "awayScore")
+  ) %>%
+  mutate(count = replace_na(count, 0))
 
-# Data summary
-glimpse(games)
-```
-
-```{r}
-#| echo: false
-
-# Scatter plot with points colored by frequency
-games_counts <- games %>%
-  group_by(homeScore, awayScore) %>%
-  summarise(count = n(), .groups = "drop")
-
-ggplot(games_counts, aes(x = homeScore, y = awayScore, color = count)) +
-  geom_point(size = 3, alpha = 0.7) +
-  scale_color_gradient(low = "lightblue", high = "darkred", name = "Frequency") +
+ggplot() +
+  geom_tile(
+    data = filter(density_data, count == 0),
+    aes(x = homeScore, y = awayScore),
+    fill = "white",
+    width = 1,
+    height = 1
+  ) +
+  geom_tile(
+    data = filter(density_data, count > 0),
+    aes(x = homeScore, y = awayScore, fill = count),
+    width = 1,
+    height = 1
+  ) +
+  geom_abline(intercept = 0, slope = 1, color = "white", linewidth = 0.4, linetype = "dashed", alpha = 0.8) +
+  scale_fill_gradientn(
+    colors = c("#0b1345", "#2c1f66", "#6b3f90", "#dc6f2f", "#fee58c"),
+    name = "Frequency",
+    guide = guide_colorbar(barwidth = 12, barheight = 0.5)
+  ) +
   labs(
-    title = "Home Score vs Away Score (Colored by Frequency)",
+    title = "Heatmap of Home vs Away Score Frequencies",
+    subtitle = "Zero-score combinations are shown in white; colored tiles reflect the number of games with each score pair.",
     x = "Home Score",
     y = "Away Score"
   ) +
-  theme_minimal() +
+  theme_minimal(base_size = 12) +
   theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
+    plot.background = element_rect(fill = "#d8d8d8", color = NA),
+    panel.background = element_rect(fill = "#d8d8d8", color = NA),
+    panel.grid.major = element_line(color = "#ebebeb", size = 0.4),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "#202040"),
+    axis.title = element_text(color = "#202040", face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "#1f2540"),
+    legend.position = "bottom",
+    legend.title = element_text(face = "bold"),
+    legend.text = element_text(size = 9)
   )
 ```

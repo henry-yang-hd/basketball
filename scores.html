@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Basketball Games Analysis</title>
+<title>Basketball Score Heatmap</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -36,9 +36,10 @@ ul.task-list li input[type="checkbox"] {
 <link href="scores_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="scores_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="scores_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="scores_files/libs/bootstrap/bootstrap-47a6f90f654540fc165cc8e168d9da10.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="scores_files/libs/bootstrap/bootstrap-d2c35422b9a7f76c609d9fb980957a57.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="fullcontent quarto-light">
@@ -49,7 +50,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Basketball Games Analysis</h1>
+<h1 class="title">Basketball Score Heatmap</h1>
 </div>
 
 
@@ -66,58 +67,12 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 23
-    gameId gameDateTimeEst     hometeamCity hometeamName hometeamId awayteamCity
-     &lt;dbl&gt; &lt;dttm&gt;              &lt;chr&gt;        &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;       
-1 42500405 2026-06-13 20:30:00 San Antonio  Spurs        1610612759 New York    
-2 42500404 2026-06-10 20:30:00 New York     Knicks       1610612752 San Antonio 
-3 42500403 2026-06-08 20:30:00 New York     Knicks       1610612752 San Antonio 
-4 42500402 2026-06-05 20:30:00 San Antonio  Spurs        1610612759 New York    
-5 42500401 2026-06-03 20:30:00 San Antonio  Spurs        1610612759 New York    
-6 42500317 2026-05-30 20:00:00 Oklahoma Ci… Thunder      1610612760 San Antonio 
-# ℹ 17 more variables: awayteamName &lt;chr&gt;, awayteamId &lt;dbl&gt;, homeScore &lt;dbl&gt;,
-#   awayScore &lt;dbl&gt;, winner &lt;dbl&gt;, gameType &lt;chr&gt;, gameSubtype &lt;chr&gt;,
-#   gameLabel &lt;chr&gt;, gameSubLabel &lt;chr&gt;, seriesGameNumber &lt;chr&gt;,
-#   attendance &lt;dbl&gt;, arenaId &lt;dbl&gt;, arenaName &lt;chr&gt;, arenaCity &lt;chr&gt;,
-#   arenaState &lt;chr&gt;, officials &lt;chr&gt;, gameDate &lt;dttm&gt;</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 73,279
-Columns: 23
-$ gameId           &lt;dbl&gt; 42500405, 42500404, 42500403, 42500402, 42500401, 425…
-$ gameDateTimeEst  &lt;dttm&gt; 2026-06-13 20:30:00, 2026-06-10 20:30:00, 2026-06-08…
-$ hometeamCity     &lt;chr&gt; "San Antonio", "New York", "New York", "San Antonio",…
-$ hometeamName     &lt;chr&gt; "Spurs", "Knicks", "Knicks", "Spurs", "Spurs", "Thund…
-$ hometeamId       &lt;dbl&gt; 1610612759, 1610612752, 1610612752, 1610612759, 16106…
-$ awayteamCity     &lt;chr&gt; "New York", "San Antonio", "San Antonio", "New York",…
-$ awayteamName     &lt;chr&gt; "Knicks", "Spurs", "Spurs", "Knicks", "Knicks", "Spur…
-$ awayteamId       &lt;dbl&gt; 1610612752, 1610612759, 1610612759, 1610612752, 16106…
-$ homeScore        &lt;dbl&gt; 90, 107, 111, 104, 95, 103, 118, 127, 93, 103, 108, 1…
-$ awayScore        &lt;dbl&gt; 94, 106, 115, 105, 105, 111, 91, 114, 130, 82, 121, 1…
-$ winner           &lt;dbl&gt; 1610612752, 1610612752, 1610612759, 1610612752, 16106…
-$ gameType         &lt;chr&gt; "Playoffs", "Playoffs", "Playoffs", "Playoffs", "Play…
-$ gameSubtype      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
-$ gameLabel        &lt;chr&gt; "NBA Finals", "NBA Finals", "NBA Finals", "NBA Finals…
-$ gameSubLabel     &lt;chr&gt; "Game 5", "Game 4", "Game 3", "Game 2", "Game 1", "Ga…
-$ seriesGameNumber &lt;chr&gt; "Game 5", "Game 4", "Game 3", "Game 2", "Game 1", "Ga…
-$ attendance       &lt;dbl&gt; 18984, 19812, 19812, 19014, 18835, 18203, 19066, 1820…
-$ arenaId          &lt;dbl&gt; 1000118, 30, 30, 1000118, 1000118, 1000052, 1000118, …
-$ arenaName        &lt;chr&gt; "Frost Bank Center", "Madison Square Garden", "Madiso…
-$ arenaCity        &lt;chr&gt; "San Antonio", "New York", "New York", "San Antonio",…
-$ arenaState       &lt;chr&gt; "TX", "NY", "NY", "TX", "TX", "OK", "TX", "OK", "OH",…
-$ officials        &lt;chr&gt; "James Capers, Scott Foster, Mitchell Ervin, Tyler Fo…
-$ gameDate         &lt;dttm&gt; 2026-06-13 20:30:00, 2026-06-10 20:30:00, 2026-06-08…</code></pre>
-</div>
-</div>
+<p>Explore the distribution of home and away score combinations across the season. White tiles indicate score pairs that never occurred, while the colored heatmap highlights the most common game results.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="scores_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="scores_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
