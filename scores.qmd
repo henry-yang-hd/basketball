@@ -1,0 +1,47 @@
+---
+title: "Basketball Games Analysis"
+format: html
+---
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: false
+
+library(tidyverse)
+
+# Read the Games.csv file
+games <- read_csv("Games.csv")
+
+# Display the first few rows
+head(games)
+```
+
+```{r}
+#| echo: false
+
+# Data summary
+glimpse(games)
+```
+
+```{r}
+#| echo: false
+
+# Scatter plot with points colored by frequency
+games_counts <- games %>%
+  group_by(homeScore, awayScore) %>%
+  summarise(count = n(), .groups = "drop")
+
+ggplot(games_counts, aes(x = homeScore, y = awayScore, color = count)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_color_gradient(low = "lightblue", high = "darkred", name = "Frequency") +
+  labs(
+    title = "Home Score vs Away Score (Colored by Frequency)",
+    x = "Home Score",
+    y = "Away Score"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold")
+  )
+```
