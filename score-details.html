@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Basketball Score Explorer</title>
+<title>Score Details</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -88,7 +88,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -112,7 +112,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Basketball Score Explorer</h1>
+<h1 class="title">Score Details</h1>
 <p class="subtitle lead">Visualize home and away score combinations</p>
 </div>
 
@@ -130,25 +130,78 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Welcome to the Basketball Score Explorer website. This site visualizes the distribution of home and away score combinations from your game data.</p>
-<ul>
-<li><a href="./scores.html">View the score heatmap</a></li>
-<li>Data source: <code>Games.csv</code></li>
-</ul>
-<section id="about" class="level2">
-<h2 class="anchored" data-anchor-id="about">About</h2>
-<p>The score heatmap page shows which score pairs occurred during the season and how frequently they appeared.</p>
-</section>
-<section id="files-included" class="level2">
-<h2 class="anchored" data-anchor-id="files-included">Files included</h2>
-<ul>
-<li><code>Games.csv</code> — game results data</li>
-<li><code>scores.qmd</code> — Quarto page that renders the score heatmap</li>
-<li><code>styles.css</code> — custom site styling</li>
-</ul>
+<div id="score-results">
+<p>
+Loading selected score details…
+</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const home = params.get('home');
+  const away = params.get('away');
+  const container = document.getElementById('score-results');
+
+  if (!home || !away) {
+    container.innerHTML = '<p>No score combination was selected. Please go back to the <a href="scores.html">heatmap</a> and click a score tile.</p>';
+    return;
+  }
+
+  const makeTable = (headers, rows) => {
+    if (!rows.length) return '<p>No games found for this score combination.</p>';
+    const table = document.createElement('table');
+    table.className = 'score-details-table';
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    headers.forEach(h => {
+      const th = document.createElement('th');
+      th.textContent = h;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+      const tr = document.createElement('tr');
+      headers.forEach(h => {
+        const td = document.createElement('td');
+        td.textContent = row[h] ?? '';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    return table.outerHTML;
+  };
+
+  const csvUrl = new URL('Games.csv', window.location.href).href;
+
+  Papa.parse(csvUrl, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      const rows = results.data;
+      const filtered = rows.filter(row => String(row.homeScore) === home && String(row.awayScore) === away);
+
+      const headers = results.meta.fields || [];
+      container.innerHTML = `
+        <h2>Games with ${home} – ${away}</h2>
+        <p><a href="scores.html">← Back to heatmap</a></p>
+        <div class="score-details-container">
+      ` + makeTable(headers, filtered) + `
+        </div>
+    },
+    error: function(error) {
+      container.innerHTML = `<p>Unable to load game data: ${error.message}</p>`;
+    }
+  });
+})();
+</script>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -224,7 +277,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/henry-yang-hd\.github\.io\/basketball\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

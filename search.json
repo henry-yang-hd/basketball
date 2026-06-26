@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Basketball Score Explorer",
+    "section": "",
+    "text": "Welcome to the Basketball Score Explorer website. This site visualizes the distribution of home and away score combinations from your game data."
+  },
+  {
+    "objectID": "index.html#about",
+    "href": "index.html#about",
+    "title": "Basketball Score Explorer",
+    "section": "About",
+    "text": "About\nThe score heatmap page shows which score pairs occurred during the season and how frequently they appeared."
+  },
+  {
+    "objectID": "index.html#files-included",
+    "href": "index.html#files-included",
+    "title": "Basketball Score Explorer",
+    "section": "Files included",
+    "text": "Files included\n\nGames.csv — game results data\nscores.qmd — Quarto page that renders the score heatmap\nstyles.css — custom site styling"
+  },
+  {
+    "objectID": "scores.html",
+    "href": "scores.html",
+    "title": "Basketball Score Heatmap",
+    "section": "",
+    "text": "Explore the distribution of home and away score combinations across the season. Hover over the tiles to inspect each score pair and see how many games produced that exact result."
+  }
+]
