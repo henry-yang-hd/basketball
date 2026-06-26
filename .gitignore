@@ -1,1 +1,13 @@
 scores_files
+
+/.quarto/
+**/*.quarto_ipynb
+
+# Quarto site output
+_site/
+*.html
+
+# R temporary/editor files
+.Rhistory
+.RData
+.Rproj.user/

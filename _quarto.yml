@@ -1,0 +1,20 @@
+project:
+  type: website
+
+title: "Basketball Scores"
+subtitle: "Visualize home and away score combinations"
+
+website:
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Score Heatmap
+        href: scores.qmd
+
+format:
+  html:
+    theme: journal
+    css: styles.css
+    toc: false
+    code-fold: false

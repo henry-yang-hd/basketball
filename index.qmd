@@ -1,0 +1,19 @@
+---
+title: "Basketball Score Explorer"
+format: html
+---
+
+Welcome to the Basketball Score Explorer website. This site visualizes the distribution of home and away score combinations from your game data.
+
+- [View the score heatmap](scores.qmd)
+- Data source: `Games.csv`
+
+## About
+
+The score heatmap page shows which score pairs occurred during the season and how frequently they appeared.
+
+## Files included
+
+- `Games.csv` — game results data
+- `scores.qmd` — Quarto page that renders the score heatmap
+- `styles.css` — custom site styling

@@ -7,8 +7,7 @@ format:
     toc: false
 ---
 
-
-Explore the distribution of home and away score combinations across the season. White tiles indicate score pairs that never occurred, while the colored heatmap highlights the most common game results.
+Explore the distribution of home and away score combinations across the season. Hover over the tiles to inspect each score pair and see how many games produced that exact result.
 
 ```{r}
 #| message: false
@@ -16,6 +15,7 @@ Explore the distribution of home and away score combinations across the season. 
 #| echo: false
 
 library(tidyverse)
+library(plotly)
 
 games <- read_csv("Games.csv")
 
@@ -33,43 +33,27 @@ density_data <- all_scores %>%
   ) %>%
   mutate(count = replace_na(count, 0))
 
-ggplot() +
-  geom_tile(
-    data = filter(density_data, count == 0),
-    aes(x = homeScore, y = awayScore),
-    fill = "white",
-    width = 1,
-    height = 1
-  ) +
-  geom_tile(
-    data = filter(density_data, count > 0),
-    aes(x = homeScore, y = awayScore, fill = count),
-    width = 1,
-    height = 1
-  ) +
-  geom_abline(intercept = 0, slope = 1, color = "white", linewidth = 0.4, linetype = "dashed", alpha = 0.8) +
-  scale_fill_gradientn(
-    colors = c("#0b1345", "#2c1f66", "#6b3f90", "#dc6f2f", "#fee58c"),
-    name = "Frequency",
-    guide = guide_colorbar(barwidth = 12, barheight = 0.5)
-  ) +
-  labs(
-    title = "Heatmap of Home vs Away Score Frequencies",
-    subtitle = "Zero-score combinations are shown in white; colored tiles reflect the number of games with each score pair.",
-    x = "Home Score",
-    y = "Away Score"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.background = element_rect(fill = "#d8d8d8", color = NA),
-    panel.background = element_rect(fill = "#d8d8d8", color = NA),
-    panel.grid.major = element_line(color = "#ebebeb", size = 0.4),
-    panel.grid.minor = element_blank(),
-    axis.text = element_text(color = "#202040"),
-    axis.title = element_text(color = "#202040", face = "bold"),
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "#1f2540"),
-    legend.position = "bottom",
-    legend.title = element_text(face = "bold"),
-    legend.text = element_text(size = 9)
+plot_ly(
+  data = density_data,
+  x = ~homeScore,
+  y = ~awayScore,
+  z = ~count,
+  type = "heatmap",
+  colorscale = list(
+    list(0, "#ffffff"),
+    list(1e-6, "#0b1345"),
+    list(0.25, "#2c1f66"),
+    list(0.5, "#6b3f90"),
+    list(0.75, "#dc6f2f"),
+    list(1, "#fee58c")
+  ),
+  hovertemplate = "Home: %{x}<br>Away: %{y}<br>Games: %{z}<extra></extra>",
+  colorbar = list(title = "Frequency", thickness = 20, len = 0.65)
+) %>%
+  layout(
+    title = list(text = "Interactive Scorigami: Home vs Away Score Frequency", x = 0.5),
+    xaxis = list(title = "Home Score"),
+    yaxis = list(title = "Away Score"),
+    margin = list(l = 70, r = 40, t = 80, b = 70)
   )
 ```
